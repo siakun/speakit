@@ -12,11 +12,17 @@ let deckPromise;
 const getDeck = () => deckPromise ??= loadDeck();
 
 export default defineConfig({
+  // GitHub Pages의 하위 경로(/speakit/)와 로컬 미리보기의 루트에서 같은 산출물이 동작하도록 자산 경로를 상대 경로로 만든다.
+  base: './',
   // 노트 전체를 웹 루트로 열지 않고, 학습에 필요한 필드만 빌드에 포함한다.
   server: { fs: { strict: true, allow: [fileURLToPath(new URL('.', import.meta.url))] } },
   build: { target: 'safari16.4', rolldownOptions: { output: { chunkFileNames: 'assets/[hash].js' } } },
   plugins: [{
     name: 'interview-content',
+    config(_, { command }) {
+      // 배포 빌드가 질문 노트를 받지 못한 채 샘플 덱을 사이트로 내보내지 않도록 멈춘다.
+      if (command === 'build' && process.env.CI && USING_SAMPLE) throw new Error('CI 빌드는 SPEAKIT_CONTENT_DIR로 질문 노트 폴더를 지정해야 합니다. 샘플 덱은 배포하지 않습니다.');
+    },
     configResolved(config) {
       if (USING_SAMPLE) config.logger.info(`질문 노트 폴더(SPEAKIT_CONTENT_DIR)를 지정하지 않아 샘플 덱을 사용합니다: ${sourceRoot}`);
     },
