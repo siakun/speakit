@@ -65,7 +65,7 @@ gh workflow run deploy.yml -R siakun/speakit
 
 콘텐츠 저장소는 비공개이므로 워크플로는 그 저장소에 읽기 전용으로 설치한 GitHub App의 토큰으로 노트를 받습니다. 이 저장소의 Actions 설정에 다음 두 값이 필요합니다.
 
-- 변수 `CONTENT_READER_APP_ID`: GitHub App의 App ID
+- 변수 `CONTENT_READER_CLIENT_ID`: GitHub App의 Client ID
 - 시크릿 `CONTENT_READER_APP_KEY`: GitHub App 개인키(.pem 파일 내용 전체)
 
 배포한 사이트는 누구나 볼 수 있습니다. 카드에는 [질문 노트](#질문-노트)의 표에 있는 필드만 실리고, `기출` 절의 내용과 표에 없는 절, 주석은 실리지 않습니다. 공개하지 않을 노트는 노트 폴더 밖에 둡니다. CI 빌드는 노트 폴더를 지정하지 않으면 샘플 덱으로 대신하지 않고 실패합니다.
