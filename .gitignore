@@ -4,7 +4,3 @@ test-results/
 playwright-report/
 .captures/
 *.log
-# 로컬 질문 노트 경로처럼 이 컴퓨터에만 맞는 설정
-*.local
-# 배포 워크플로가 콘텐츠 저장소를 체크아웃하는 자리
-.content/

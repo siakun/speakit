@@ -7,12 +7,12 @@
     "dev": "vite --host 0.0.0.0 --port 5173 --strictPort",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173 --strictPort",
-    "test": "node --test tests/content.test.mjs",
+    "test": "node --disable-warning=ExperimentalWarning --test tests/content.test.mjs tests/deck.test.mjs",
     "test:e2e": "playwright test",
-    "content:check": "node scripts/check-content.mjs"
+    "deck:export": "node --disable-warning=ExperimentalWarning scripts/export-deck.mjs"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "react": "19.3.0",

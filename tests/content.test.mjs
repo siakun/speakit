@@ -1,8 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { loadDeck, parseTopic } from '../scripts/content.mjs';
-import { CONTENT_DIR, SAMPLE_CONTENT_DIR } from '../scripts/content-config.mjs';
+import { loadDeck, parseTopic, SAMPLE_CONTENT_DIR } from '../scripts/content.mjs';
 
 const fixture = `# 예시
 ## 기초질문
@@ -40,20 +39,21 @@ test('평가 기준 누락은 불완전한 카드 대신 빌드 오류로 알린
   assert.throws(() => parseTopic('# 빈 노트', '분야/빈 노트.md'), /기초질문/);
 });
 
-// 지정한 질문 노트와 샘플 덱을 모두 확인한다. 샘플 덱은 브라우저 검사의 기준이라 노트를 지정해도 함께 깨지지 않아야 한다.
-for (const root of new Set([CONTENT_DIR, SAMPLE_CONTENT_DIR])) {
-  test(`${root === SAMPLE_CONTENT_DIR ? '샘플 덱' : '지정한 질문 노트'}의 질문, 체크 항목과 비교 답변을 빠짐없이 읽는다`, async () => {
-    const { topics, files } = await loadDeck(root);
-    assert.equal(topics.length, files.length);
-    assert.equal(new Set(topics.map((topic) => topic.id)).size, topics.length);
-    for (let index = 0; index < topics.length; index++) {
-      const topic = topics[index];
-      const source = (await readFile(files[index], 'utf8')).replaceAll('\r\n', '\n');
-      assert.equal(topic.checklist.length, [...source.matchAll(/^- \[[ x]\] \*\*/gm)].length, topic.id);
-      assert.equal(topic.examples.length, 3, topic.id);
-      assert.ok(topic.examples.every((example) => example.answer.length > 0), topic.id);
-      assert.ok(topic.followups.length > 0, topic.id);
-      assert.ok(topic.checklist.every((item) => item.detail && item.followup), topic.id);
-    }
-  });
-}
+test('샘플 덱의 질문, 체크 항목과 비교 답변을 빠짐없이 읽는다', async () => {
+  const { topics, files } = await loadDeck(SAMPLE_CONTENT_DIR);
+  assert.equal(topics.length, files.length);
+  assert.equal(new Set(topics.map((topic) => topic.id)).size, topics.length);
+  for (let index = 0; index < topics.length; index++) {
+    const topic = topics[index];
+    const source = (await readFile(files[index], 'utf8')).replaceAll('\r\n', '\n');
+    assert.equal(topic.checklist.length, [...source.matchAll(/^- \[[ x]\] \*\*/gm)].length, topic.id);
+    assert.equal(topic.examples.length, 3, topic.id);
+    assert.ok(topic.examples.every((example) => example.answer.length > 0), topic.id);
+    assert.ok(topic.followups.length > 0, topic.id);
+    assert.ok(topic.checklist.every((item) => item.detail && item.followup), topic.id);
+  }
+});
+
+test('질문 노트 폴더가 없으면 빈 덱 대신 위치를 알린다', async () => {
+  await assert.rejects(loadDeck(`${SAMPLE_CONTENT_DIR}-없는-폴더`), /질문 노트 폴더가 없습니다/);
+});

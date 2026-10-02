@@ -1,13 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { loadDeck } from '../../scripts/content.mjs';
-import { SAMPLE_CONTENT_DIR } from '../../scripts/content-config.mjs';
+import { loadDeck, SAMPLE_CONTENT_DIR } from '../../scripts/content.mjs';
 
 test('긴 질문의 작은 화면, 가로 화면과 데스크톱 배치', async ({ page }, testInfo) => {
   const { topics } = await loadDeck(SAMPLE_CONTENT_DIR);
   const longest = topics.toSorted((a, b) => b.question.length - a.question.length)[0];
   await page.addInitScript((id) => localStorage.setItem('cs-speaking-cards:v1', JSON.stringify({ version: 1, category: 'all', mode: 'all', order: [id], index: 0, saved: [], checked: {} })), longest.id);
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/');
+  await page.goto('/#sample');
   await expect(page.getByRole('button', { name: /^답변 확인:/ })).toBeVisible();
   for (const [width, height] of [[320, 568], [390, 844], [430, 932], [844, 390], [1440, 900]]) {
     await page.setViewportSize({ width, height });
@@ -32,7 +31,7 @@ test('긴 꼬리 질문에서 코드 표기와 터치 영역 유지', async ({ p
   await page.addInitScript((id) => localStorage.setItem('cs-speaking-cards:v1', JSON.stringify({ version: 1, category: 'all', mode: 'all', order: [id], index: 0, saved: [], checked: {} })), longest.topic.id);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 320, height: 568 });
-  await page.goto('/');
+  await page.goto('/#sample');
   await page.getByRole('button', { name: /^답변 확인:/ }).tap();
   await page.getByText('꼬리 질문 더 보기', { exact: false }).tap();
   await page.locator('[data-active="true"] .extra-question').nth(longest.index).tap();
@@ -47,7 +46,7 @@ test('긴 꼬리 질문에서 코드 표기와 터치 영역 유지', async ({ p
 
 test('저장이 차단되어도 현재 연습을 계속 진행', async ({ page }) => {
   await page.addInitScript(() => { Storage.prototype.setItem = () => { throw new DOMException('blocked', 'QuotaExceededError'); }; });
-  await page.goto('/');
+  await page.goto('/#sample');
   await expect(page.getByRole('status')).toContainText('기록을 저장하지 못했습니다');
   await page.getByRole('button', { name: /^답변 확인:/ }).tap();
   await expect(page.getByRole('heading', { name: '답변에서 짚어야 할 내용' })).toBeVisible();

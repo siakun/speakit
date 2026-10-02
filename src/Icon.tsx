@@ -10,6 +10,8 @@ const paths = {
   shuffle: <><path d="M3 6h3c5 0 6 12 11 12h4m-4-4 4 4-4 4M3 18h3c1.5 0 2.8-1 4-3M14 8c1-1.3 2-2 3-2h4m-4-4 4 4-4 4" /></>,
   search: <><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></>,
   info: <><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7v.1" /></>,
+  link: <><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1" /><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1" /></>,
+  upload: <><path d="M12 15V4m-4 4 4-4 4 4" /><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" /></>,
 };
 export type IconName = keyof typeof paths;
 export default function Icon({ name, size = 20 }: { name: IconName; size?: number }) {

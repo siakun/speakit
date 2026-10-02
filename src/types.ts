@@ -11,7 +11,6 @@ export interface TopicSummary {
   category: string;
   title: string;
   question: string;
-  hasPastQuestion: boolean;
 }
 
 export interface TopicDetails {

@@ -14,7 +14,7 @@ const gestureTest = test.extend({
 
 async function prepare(page: Page) {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
+  await page.goto('/#sample');
   await page.getByRole('button', { name: '연습할 질문 선택' }).tap();
   await page.getByRole('searchbox').fill('샘플 개념 01');
   await page.locator('.search-result').first().tap();
@@ -192,9 +192,9 @@ test('동작 줄이기와 scrollend 미지원 환경에서 카드 선택 확정'
 });
 
 test('진단은 요청한 주소에서만 표시하고 JS 콜백과 스크롤 fps를 구분', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#sample');
   await expect(page.locator('[data-frame-monitor]')).toHaveCount(0);
-  await page.goto('/?fps=1');
+  await page.goto('/?fps=1#sample');
   const monitor = page.locator('[data-frame-monitor]');
   await expect(monitor).toHaveAttribute('data-current-hz', /^[1-9]\d*$/);
   await expect(monitor).toContainText('브라우저 기본 스크롤');
@@ -202,7 +202,7 @@ test('진단은 요청한 주소에서만 표시하고 JS 콜백과 스크롤 fp
   await page.getByRole('button', { name: '다음 질문', exact: true }).tap();
   await expect(page.locator('.card-viewport')).toHaveAttribute('data-motion', 'idle');
   await expect(monitor).not.toHaveAttribute('data-motion-hz');
-  await page.goto('/');
+  await page.goto('/#sample');
   await expect(page.locator('[data-frame-monitor]')).toHaveCount(0);
 });
 

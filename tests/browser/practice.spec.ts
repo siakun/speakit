@@ -11,7 +11,7 @@ async function chooseTopic(page: Page, text: string) {
 test('카드 뒤집기, 직접 점검, 꼬리 질문, 책갈피와 재접속', async ({ page }, testInfo) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto('/');
+  await page.goto('/#sample');
   await chooseTopic(page, '샘플 개념 01');
   await expect(page.locator('[data-active="true"] .question-content h1')).toContainText('샘플 개념 01');
   await mkdir('.captures', { recursive: true });
@@ -36,7 +36,7 @@ test('카드 뒤집기, 직접 점검, 꼬리 질문, 책갈피와 재접속', a
 });
 
 test('오류를 포함한 비교 답변과 빈 꼬리 답변의 구분', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#sample');
   await chooseTopic(page, '샘플 비교 01');
   await page.getByRole('button', { name: /^답변 확인:/ }).tap();
   await page.getByRole('button', { name: /1질문 3답변/ }).tap();
@@ -51,7 +51,7 @@ test('오류를 포함한 비교 답변과 빈 꼬리 답변의 구분', async (
 });
 
 test('회차 중 중복 방지, 이전 이동, 마지막 질문 뒤 재시작', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#sample');
   await page.getByRole('button', { name: '연습할 질문 선택' }).tap();
   await page.locator('.library-row').filter({ hasText: /^샘플 응용/ }).tap();
   const count = Number((await page.locator('.position').innerText()).split('/')[1]);
@@ -74,7 +74,7 @@ test('회차 중 중복 방지, 이전 이동, 마지막 질문 뒤 재시작', 
 });
 
 test('질문 한 장의 회차 재시작도 첫 카드로 이동', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#sample');
   await page.getByRole('button', { name: '다시 볼 질문에 저장', exact: true }).tap();
   await page.getByRole('button', { name: '연습할 질문 선택' }).tap();
   await page.locator('.library-row').filter({ hasText: '다시 볼 질문' }).tap();
@@ -92,7 +92,7 @@ test('질문 한 장의 회차 재시작도 첫 카드로 이동', async ({ page
 });
 
 test('모바일 레이아웃, 검색 결과 없음과 빈 복습 목록', async ({ page }, testInfo) => {
-  await page.goto('/');
+  await page.goto('/#sample');
   await page.setViewportSize({ width: 320, height: 568 });
   await expect(page.locator('[data-active="true"] .card-front')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -112,7 +112,7 @@ test('모바일 레이아웃, 검색 결과 없음과 빈 복습 목록', async 
 
 test('실제 터치로 좌우 스와이프, 뒤집기와 시트 닫기', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'CDP 터치 입력은 Chromium에서만 제공됩니다.');
-  await page.goto('/');
+  await page.goto('/#sample');
   await chooseTopic(page, '샘플 개념 01');
   const original = await page.locator('[data-active="true"] .question-content h1').innerText();
   const cdp = await page.context().newCDPSession(page);
@@ -144,7 +144,7 @@ test('실제 터치로 좌우 스와이프, 뒤집기와 시트 닫기', async (
 
 test('답변의 실제 세로 터치 스크롤과 카드 이동 구분', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'CDP 터치 입력은 Chromium에서만 제공됩니다.');
-  await page.goto('/');
+  await page.goto('/#sample');
   await chooseTopic(page, '샘플 개념 01');
   await page.getByRole('button', { name: /^답변 확인:/ }).tap();
   await expect(page.getByRole('heading', { name: '답변에서 짚어야 할 내용' })).toBeVisible();

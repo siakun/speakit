@@ -1,8 +1,9 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { CONTENT_DIR } from './content-config.mjs';
+import { fileURLToPath } from 'node:url';
 
-export const sourceRoot = CONTENT_DIR;
+// 마크다운 질문 노트를 읽는 규칙이다. 앱 빌드는 샘플 덱을 읽을 때, 변환 스크립트(export-deck.mjs)는 사용자의 노트를 읽을 때 사용한다.
+export const SAMPLE_CONTENT_DIR = fileURLToPath(new URL('../sample-content', import.meta.url));
 
 // 원본을 고치거나 답을 추정하지 않는다. 비교용 답변과 평가 기준을 서로 다른 필드로 유지한다.
 function sections(text, level) {
@@ -51,11 +52,10 @@ export function parseTopic(markdown, source) {
     followups,
     answerDraft: get('답변'),
     references: get('참고자료'),
-    hasPastQuestion: Boolean(get('기출')),
   };
 }
 
-export async function loadDeck(root = sourceRoot) {
+export async function loadDeck(root) {
   const topics = [];
   const files = [];
   const entries = await readdir(root, { withFileTypes: true }).catch((error) => {
